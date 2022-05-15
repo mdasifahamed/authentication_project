@@ -3,6 +3,7 @@ const express = require('express');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
+const encrypt = require('mongoose-encryption'); // to encrypt user data
 const app = express();
 app.set("view engine", 'ejs');
 app.use(express.static("public"));
@@ -10,11 +11,15 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 mongoose.connect("mongodb://localhost:27017/userDB")
-const usershcema = { // creating new schema to store user data in the database
+const userShcema = new mongoose.Schema({ // creating new schema to store user data in the database
   email: String,
   password: String
-}
-const User = mongoose.model("User", usershcema); // creating database model
+});
+
+var secrets = "This will be Used For Encryptions"; // ecryption key
+userShcema.plugin(encrypt,{secret:secrets, encryptedFields: ['password']}); // which collection to be encrypted and and the field to be encryted.
+
+const User = mongoose.model("User", userShcema); // creating database model
 
 app.get("/", function(req, res) {
   res.render("home");
