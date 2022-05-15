@@ -4,7 +4,7 @@ const express = require('express');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
-const encrypt = require('mongoose-encryption'); // to encrypt user data
+const md5 = require('md5') // to encrypt user data
 const app = express();
 app.set("view engine", 'ejs');
 app.use(express.static("public"));
@@ -17,8 +17,6 @@ const userShcema = new mongoose.Schema({ // creating new schema to store user da
   password: String
 });
 
-var secrets = process.env.SECRETS; // ecryption key
-userShcema.plugin(encrypt,{secret:secrets, encryptedFields: ['password']}); // which collection to be encrypted and and the field to be encryted.
 
 const User = mongoose.model("User", userShcema); // creating database model
 
@@ -36,7 +34,7 @@ app.get("/register", function(req, res) {
 // from this post method will get user email and password throug html form
 app.post("/register", function(req, res) {
   const username = req.body.username; // recieving usename from user
-  const password = req.body.password; // recieving password from user
+  const password = md5(req.body.password); // recieving password from user and converting it to hash using md5 module
   const user = new User({ // storing user registration data to the database creating object its model
     email: username,
     password: password
@@ -51,7 +49,7 @@ app.post("/register", function(req, res) {
 })
 app.post('/login', function(req, res) {
   const username = req.body.username; // from the log in page getting user name from the user
-  const password = req.body.password; // from the log in page getting user password from the user
+  const password = md5(req.body.password); // from the log in page getting user password from the user and also converting it in hash with th md5 module to match with the database
   User.findOne({
     email: username
   }, function(err, foudedUser) { // after the user press log in this findone method firt look for user email that has in our datbase or not
