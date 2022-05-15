@@ -1,4 +1,5 @@
 //jshint esversion:6
+require('dotenv').config(); 
 const express = require('express');
 const ejs = require('ejs');
 const mongoose = require('mongoose');
@@ -16,7 +17,7 @@ const userShcema = new mongoose.Schema({ // creating new schema to store user da
   password: String
 });
 
-var secrets = "This will be Used For Encryptions"; // ecryption key
+var secrets = process.env.SECRETS; // ecryption key
 userShcema.plugin(encrypt,{secret:secrets, encryptedFields: ['password']}); // which collection to be encrypted and and the field to be encryted.
 
 const User = mongoose.model("User", userShcema); // creating database model
