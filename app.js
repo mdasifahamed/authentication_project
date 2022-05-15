@@ -66,7 +66,7 @@ app.post('/login', function(req, res) {
       console.log(err);
     } else {
       if (foudedUser) { // if the username i mean the email shows in the datbase then it go to next condition
-        bcrypt.compare(password, foudedUser.password,  function(err, result) { // this bycrypt compare to compare data which has been in the datbase to return somethis 
+        bcrypt.compare(password, foudedUser.password,  function(err, result) { // this bycrypt compare to compare data which has been in the datbase to return somethis
             if (err){
               console.log(err);
             }else if(result === true){
